@@ -1,6 +1,6 @@
 
-from fastapi import APIRouter , UploadFile, File
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter , UploadFile, Body, Request, Query, HTTPException
+from fastapi.responses import JSONResponse 
 from fastapi.encoders import jsonable_encoder
 from db.admin import Admin
 import shutil
@@ -28,29 +28,37 @@ def get_databases():
     return JSONResponse(content=dbs, status_code=200)
 
 
-
-
-@db_router.post("/dackup/{db_name}")
+@db_router.post("/dbackup/{db_name}")
 async def backup_db(db_name:str):
     result = admin.backup(db_name=db_name)
     return JSONResponse(content=result, status_code=200)
 
 
-@db_router.post("/drestore/{db_name}")
-async def restore_db(db_name: str, sql_file: UploadFile = File(...)):
-    # Save uploaded file to a temp location
-    temp_dir = "temp_uploads"
-    os.makedirs(temp_dir, exist_ok=True)
 
-    temp_path = os.path.join(temp_dir, f"temp_{sql_file.filename}")
+@db_router.post("/restore/{db_name}")
+async def restore_file(
+    db_name: str,
+    data : dict = Body(...)
+):
+    backup_path = data.get("backup_path")
     
-    with open(temp_path, "wb") as buffer:
-        shutil.copyfileobj(sql_file.file, buffer)
+    if not os.path.isfile(backup_path):
+        raise HTTPException(status_code=404, detail="Backup file not found.")
 
-    # Call your restore logic here
-    result = admin.restore(db_name=db_name, sql_file=temp_path)
+    try:
+        result = admin.restore(db_name=db_name, sql_file=backup_path)
+        return JSONResponse(content=result, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # Optional: clean up the temp file
-    os.remove(temp_path)
+@db_router.get("/backups")
+async def get_backups():
+    result = admin.getBackups()
+    return result
 
+@db_router.delete("/dropdb/{db_name}")
+async def drop_db(db_name:str):
+    result = admin.drop(db_name=db_name)
     return JSONResponse(content=result, status_code=200)
+
+

@@ -1,3 +1,4 @@
+import db
 from db.config import base_engine 
 from sqlalchemy import text
 
@@ -78,9 +79,9 @@ class Admin:
         host: str = "localhost", 
         port: int = 3306
     ):
-        export_dir = r"C:\Users\msu-wone\Downloads\backup"
+        export_dir = r"C:\Users\msu-wone\Downloads\ITE192-Final Project\backups"  # Update path as needed
         os.makedirs(export_dir, exist_ok=True)
-
+        
         yearnow = datetime.datetime.now().strftime("%Y")
         unique_number = random.randint(1000, 9999)  # 4-digit random number
 
@@ -117,14 +118,16 @@ class Admin:
             if result.returncode == 0:
                 size_mb = round(os.path.getsize(backup_file) / (1024 * 1024), 2)
                 created_at = datetime.datetime.fromtimestamp(os.path.getctime(backup_file)).strftime("%Y-%m-%d %H:%M:%S")
-
+            
                 return {
                     "success": True,
                     "file_name" : file_name,
                     "path": backup_file,
                     "size_mb": size_mb,
-                    "created_at": created_at
+                    "created_at": created_at, 
+                   
                 }
+                
             else:
                 return {
                     "success": False,
@@ -147,13 +150,39 @@ class Admin:
         host: str = "localhost",
         port: int = 3306
     ):
-        
         mysql_path = r"C:\New folder\mysql\bin\mysql.exe"  # Update path as needed
 
         if not os.path.exists(sql_file):
             return {"success": False, "error": f"SQL file not found: {sql_file}"}
 
-        # Construct the mysql command
+        # Check if DB exists
+        existing_dbs = [db['db_name'] for db in self.list_databases()]
+        if db_name not in existing_dbs:
+            # Create the DB using subprocess
+            create_db_cmd = [
+                mysql_path,
+                f"-h{host}",
+                f"-P{port}",
+                f"-u{user}"
+            ]
+            if password:
+                create_db_cmd.append(f"-p{password}")
+
+            # Run CREATE DATABASE IF NOT EXISTS
+            create_db_sql = f"CREATE DATABASE IF NOT EXISTS `{db_name}`;"
+            try:
+                proc_create = subprocess.run(
+                    create_db_cmd,
+                    input=create_db_sql,
+                    text=True,
+                    capture_output=True
+                )
+                if proc_create.returncode != 0:
+                    return {"success": False, "error": f"Failed to create database: {proc_create.stderr}"}
+            except Exception as e:
+                return {"success": False, "error": f"Database creation error: {str(e)}"}
+
+        # Prepare restore command
         cmd = [
             mysql_path,
             f"-h{host}",
@@ -183,6 +212,7 @@ class Admin:
                         "created_at": created_at
                     }
                 }
+
             else:
                 return {
                     "success": False,
@@ -191,3 +221,90 @@ class Admin:
 
         except Exception as e:
             return {"success": False, "error": str(e)}
+
+    
+    def getBackups(self):
+        export_dir = r"C:\Users\msu-wone\Downloads\ITE192-Final Project\backups"
+        backups = []
+        
+        for file in os.listdir(export_dir):
+            file_path = os.path.join(export_dir, file)
+            
+            if os.path.isfile(file_path):
+                size_bytes = os.path.getsize(file_path)
+                size_mb = round(size_bytes / (1024 * 1024), 2)
+                created_timestamp = os.path.getctime(file_path)
+                created_date = datetime.datetime.fromtimestamp(created_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                
+                base_name = os.path.basename(file)
+                # Get the portion before '__backup__', then split again at '_'
+                db_name = base_name.split('__backup__')[0].split('_')[0]
+
+                backups.append({
+                    'file': file_path,
+                    'db_name': db_name,
+                    'size_mb': size_mb,
+                    'created': created_date, 
+                })
+        
+        return backups
+
+    def getAllTables(self):
+        query = """
+        SELECT 
+            table_schema AS database_name,
+            table_name,
+            ROUND((data_length + index_length) / 1024 / 1024, 2) AS size_mb,
+            table_rows
+        FROM 
+            information_schema.tables
+        WHERE 
+            table_schema NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys')
+        ORDER BY 
+            table_schema, table_name;
+        """
+
+        with base_engine.connect() as conn:
+            result = conn.execute(text(query))
+            rows = result.fetchall()
+
+        database_tables = []
+        for row in rows:
+            table_info = {
+                "database_name": row.database_name,
+                "table_name": row.table_name,
+                "size_mb": float(row.size_mb),
+                "table_rows": int(row.table_rows)
+            }
+            database_tables.append(table_info)
+
+        return database_tables
+
+    
+    def drop(self, db_name: str, table_name: Optional[str] = None):
+        print(f"db name : {db_name}")
+        if table_name:
+            # Drop a specific table
+            query = f"DROP TABLE IF EXISTS `{db_name}`.`{table_name}`"
+            target = f"table `{table_name}` from database `{db_name}`"
+        else:
+            # Drop the entire database
+            query = f"DROP DATABASE IF EXISTS `{db_name}`"
+            target = f"database `{db_name}`"
+
+        try:
+            with base_engine.connect() as conn:
+                conn.execute(text(query))
+                conn.commit()
+            return {
+                "success": True,
+                "message": f"Successfully dropped {target}."
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+
+            
