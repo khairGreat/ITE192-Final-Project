@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from db import admin
 from db.admin import Admin
 
+
 #  ? CREATE A TABLE for a specified database 
 # ? Delete a table from a specified database 
 # ? Update a table in a specified database
@@ -24,10 +25,18 @@ async def get_all_tables():
 
 @table_router.post("/tablebackup/{db_name}/{table_name}")
 async def backup_table(db_name:str, table_name:str):
+    admin.create_log(log_level="INFO", message=f'Created a table {table_name} backup', module='BACKUP', target=table_name)
     result = admin.backup(db_name=db_name, table_name=table_name)
     return JSONResponse(content=result, status_code=200)
 
 @table_router.delete("/droptable/{db_name}/{table_name}")
 async def drop_db(db_name:str, table_name:str):
+    admin.create_log(log_level="WARNING", message=f'Deleted a table {table_name}', module='DELETE', target=table_name)
     result = admin.drop(db_name=db_name, table_name=table_name)
     return JSONResponse(content=result, status_code=200)
+
+@table_router.post("/createtable/{db_name}/{table_name}")
+async def create_table(db_name:str , table_name : str ):
+    admin.create_log(log_level="INFO", message=f'Created a database {table_name}', module='CREATE', target=table_name)
+    result = admin.create_table(db_name=db_name ,table_name= table_name)
+    return JSONResponse(content=result , status_code=200)

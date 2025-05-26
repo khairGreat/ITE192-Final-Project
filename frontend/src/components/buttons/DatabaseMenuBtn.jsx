@@ -3,11 +3,12 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Storage } from '@mui/icons-material'; // Import a database-like icon
 
-export const DatabaseMenuBtn =()=> {
+export const DatabaseMenuBtn =( {className= ""})=> {
   const navigate = useNavigate();
 
   return (
     <Button
+    className=  {className}
       variant="contained"
       startIcon={<Storage />} // Add icon
       onClick={() => navigate('/admin/database')}

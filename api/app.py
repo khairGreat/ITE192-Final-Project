@@ -1,9 +1,11 @@
 import re
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from router.databaseRouter import db_router
 from router.tableRouter import table_router
 from fastapi.middleware.cors import CORSMiddleware
 from db.admin import Admin
+from router.adminRouter import admin_router
 
 app = FastAPI()
 admin = Admin()
@@ -23,18 +25,12 @@ app.add_middleware(
 )
 app.include_router(db_router)
 app.include_router(table_router)
-
+app.include_router(admin_router)
 
 @app.get('/')
 async def root():
     return 'hello khair'
 
-@app.get("/admin")
-async def admin_route():
-    
-    admin_info = {
-        "username" : admin.username , 
-        "password" : admin.password 
-    }
-    
-    return admin_info
+
+
+

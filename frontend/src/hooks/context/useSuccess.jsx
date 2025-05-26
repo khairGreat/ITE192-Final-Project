@@ -8,7 +8,8 @@ export const SuccessProvider = ({ children }) => {
     message: '',
     severity: 'success',
   });
-
+  
+  
   useEffect(() => {
     if (notifData.success) {
       const timer = setTimeout(() => {

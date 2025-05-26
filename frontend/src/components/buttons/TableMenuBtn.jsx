@@ -3,11 +3,12 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { TableChart } from '@mui/icons-material';
 
-export const TableMenuBtn = () => {
+export const TableMenuBtn = ( { className = "" }) => {
   const navigate = useNavigate();
 
   return (
     <Button
+    className= {className }
       variant="contained"
       startIcon={<TableChart />}
       onClick={() => navigate('/admin/table')}
