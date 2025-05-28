@@ -9,7 +9,8 @@ export const SuccessProvider = ({ children }) => {
     severity: 'success',
   });
   
-  
+  console.log("success context", notifData);
+    
   useEffect(() => {
     if (notifData.success) {
       const timer = setTimeout(() => {

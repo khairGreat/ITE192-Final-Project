@@ -7,7 +7,15 @@ export const useHasData = () => {
     const checkData = async () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/");
-        setHasData(response.ok);
+
+        if (response.ok) {
+          const { is_connected }  = await response.json()
+          console.log(`is connected: ${is_connected}`);
+          setHasData(is_connected);
+          
+        } else {
+          setHasData(false);
+        }
       } catch (error) {
         console.error("Error checking data:", error);
         setHasData(false);
@@ -15,7 +23,6 @@ export const useHasData = () => {
     };
 
     checkData();
-    
   }, []);
 
   return { hasData };

@@ -97,7 +97,7 @@ export const SummaryReport = ({ databases, tables, backups, serverStatus }) => {
           <Text>Operating System: {serverStatus.os}</Text>
           <Text>Machine: {serverStatus.machine}</Text>
           <Text>IP Address: {serverStatus.ip_address}</Text>
-          <Text>Uptime: {formatUptime(serverStatus.uptime_seconds)}</Text>
+          <Text>Uptime: {formatUptime(serverStatus.uptime)}</Text>
           <Text>
             Total Database Size: {serverStatus.total_database_size_mb} MB
           </Text>

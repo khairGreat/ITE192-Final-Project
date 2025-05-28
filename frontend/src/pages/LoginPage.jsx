@@ -32,7 +32,7 @@ const darkTheme = createTheme({
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { isAdmin, checkAdmin } = useAdminAuth();
+  const {  checkAdmin } = useAdminAuth();
   const { setNotifData } = useSuccess();
   const navigate = useNavigate();
 
@@ -40,15 +40,15 @@ export default function LoginPage() {
   event.preventDefault();
   const isAuthenticated = await checkAdmin(username, password); // boolean
   if (isAuthenticated) {
+      setNotifData({
+      success : true,
+      message: "successfully log in",
+      severity: "success",
+    });
     console.log("Admin authenticated successfully");
     navigate("/admin/dashboard");
   } else {
     console.error("Admin authenticated unsuccessfully");
-    setNotifData({
-      success : true,
-      message: "Invalid username or password",
-      severity: "error",
-    });
   }
 };
 

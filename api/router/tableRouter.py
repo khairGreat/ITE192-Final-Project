@@ -19,6 +19,7 @@ async def table_route_root():
 
 @table_router.get("/tables")
 async def get_all_tables():
+    
     tables = admin.getAllTables()
     return JSONResponse(content=tables, status_code=200)
 

@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 --
--- Host: localhost    Database: db1
+-- Host: localhost    Database: db3
 -- ------------------------------------------------------
 -- Server version	10.4.32-MariaDB
 
@@ -16,25 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `db1_table1`
+-- Table structure for table `car_manufacturers`
 --
 
-DROP TABLE IF EXISTS `db1_table1`;
+DROP TABLE IF EXISTS `car_manufacturers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `db1_table1` (
-  `message` varchar(250) NOT NULL,
-  `ok` text NOT NULL
+CREATE TABLE `car_manufacturers` (
+  `manufacturer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `country` varchar(50) DEFAULT NULL,
+  `founding_year` year(4) DEFAULT NULL,
+  `is_still_active` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`manufacturer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `db1_table1`
+-- Dumping data for table `car_manufacturers`
 --
 
-LOCK TABLES `db1_table1` WRITE;
-/*!40000 ALTER TABLE `db1_table1` DISABLE KEYS */;
-/*!40000 ALTER TABLE `db1_table1` ENABLE KEYS */;
+LOCK TABLES `car_manufacturers` WRITE;
+/*!40000 ALTER TABLE `car_manufacturers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `car_manufacturers` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -46,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-22 17:12:00
+-- Dump completed on 2025-05-28 20:24:18

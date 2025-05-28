@@ -3,12 +3,14 @@ import {} from "react";
 import { useDatabase } from "./context/useDatabase";
 import { useTables } from "./context/useTables";
 import { useGetBackup } from "./context/useGetBackup";
+import { useSuccess } from "./context/useSuccess";
 
 export function useCreateTable() {
   
   const { fetchDatabases } = useDatabase();
   const { fetchTables } = useTables();
   const { fetchBackups } = useGetBackup();
+  const { setNotifData } = useSuccess();
 
   const addTable = async (db_name, table_name, saveBackup) => {
     const url = `http://127.0.0.1:8000/createtable/${db_name}/${table_name}`;

@@ -12,7 +12,6 @@ admin_router = APIRouter()
 async def admin_route_root():
     return "at admin router"
 
-
 @admin_router.get("/admin/auth/{username}/{password}")
 async def admin_auth(username : str, password: str):
 

@@ -1,33 +1,59 @@
 
-from fastapi import APIRouter , UploadFile, Body, Request, Query, HTTPException
+from fastapi import APIRouter ,  Body,  HTTPException
 from fastapi.responses import JSONResponse 
-from fastapi.encoders import jsonable_encoder
 from db.admin import Admin
 
 import os
 
-
 admin = Admin()
-
 db_router = APIRouter()
 
 @db_router.get("/db")
 async def db_route_root():
     return "at db router "
 
-
 @db_router.post("/createdb/{db_name}")
 async def create_db(db_name:str):
-    admin.create_log(log_level="INFO", message=f'Created a database {db_name}', module='CREATE', target=db_name)
-    admin.create_database(name=db_name)
-    return {"message": f"Database `{db_name}` created."}
+    try:
+        
+        result = admin.create_database(name=db_name)
+        if result:
+            admin.create_log(log_level="INFO", message=f'Created a database {db_name}', module='CREATE', target=db_name)
+            return JSONResponse(
+                content={
+                    "success" : True , 
+                    "message": f"Database `{db_name}` created."
+                }, 
+                status_code=200)
+        return JSONResponse(content={
+                "success" : False , 
+                "message": f"Failed to create `{db_name}`"
+            }, status_code=404)
+    except Exception as error:
+        return JSONResponse(content={
+                "success" : True ,
+                "message": error
+            },status_code=500)
+    
 
 
 @db_router.get("/databases")
 def get_databases():
-    
-    dbs = admin.list_databases()
-    return JSONResponse(content=dbs, status_code=200)
+    try:
+         dbs = admin.list_databases()
+         if dbs:
+            return JSONResponse(content=dbs, status_code=200)
+         return JSONResponse(content={
+             "success" : True , 
+             "message" : "Failed to fetch the databases" 
+         }, status_code = 404)
+         
+    except Exception as error: 
+        return JSONResponse(content={
+            "success" : False ,
+            "message" : error
+        })
+   
 
 
 @db_router.post("/dbackup/{db_name}")
@@ -44,7 +70,7 @@ async def restore_file(
     data : dict = Body(...)
 ):
     admin.create_log(log_level="INFO", message=f'Restored a database {db_name}', module='RESTORE', target=db_name)
-    backup_path = data.get("backup_path")
+    backup_path   = data.get("backup_path")
     
     if not os.path.isfile(backup_path):
         raise HTTPException(status_code=404, detail="Backup file not found.")

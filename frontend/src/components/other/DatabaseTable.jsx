@@ -9,6 +9,7 @@ import { useGetBackup } from "../../hooks/context/useGetBackup";
 import { ConfirmDrop } from "../Modal/ConfirmDrop";
 
 export default function DatabaseTable() {
+  
   const [openConfirmDrop, setOpenConfirmDrop] = useState({
     open: false,
     dbName: "",
