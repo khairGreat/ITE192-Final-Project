@@ -8,8 +8,11 @@ export const ServerStatusProvider = ({ children }) => {
   const fetchServerStatus = async () => {
     try {
       const res = await fetch("http://127.0.0.1:8000/admin/status"); // customize URL
-      const data = await res.json();
-      setServerStatus(data);
+      const { success, data } = await res.json();
+      if (success) {
+        setServerStatus(data);  
+        console.log("server status:", data);
+      }
     } catch (error) {
       console.error("Error fetching server status:", error);
     }

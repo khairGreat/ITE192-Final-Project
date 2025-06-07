@@ -7,16 +7,29 @@ export const BackupProvider = ({ children }) => {
 
   const fetchBackups = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/backups", { method: "GET" });
+      const response = await fetch("http://127.0.0.1:8000/backups/list", {
+        method: "GET",
+      });
+      const { success, data, message } = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
-        setBackups(data);
-        console.log("backup data:", data);
+        if (success) {
+          setBackups(data);
+          console.log("Backup data:", data);
+        } else {
+          console.warn(
+            "Server responded with failure:",
+            message || "No message provided"
+          );
+          
+        }
       } else {
-        console.error("Failed to fetch backups");
+        console.error("HTTP error while fetching backups.");
+        
       }
     } catch (error) {
       console.error("Error fetching backups:", error);
+   
     }
   };
 

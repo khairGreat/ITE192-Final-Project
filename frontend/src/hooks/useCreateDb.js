@@ -11,16 +11,20 @@ export const useCreateDb = () => {
   const { fetchBackups } = useGetBackup()
 
   const addDb = async (db_name, saveBackup) => {
-    const url = `http://127.0.0.1:8000/createdb/${db_name}`;
+    const url = `http://127.0.0.1:8000/databases/createDb`;
     const response = await fetch(url, {
       method: "POST",
+      body : JSON.stringify({db_name : db_name})
     });
 
     if (saveBackup) {
       const backupResponse = await fetch(
-        `http://127.0.0.1:8000/dbackup/${db_name}`,
+        `http://127.0.0.1:8000/backups/createlogical`,
         {
           method: "POST",
+          body : JSON.stringify({
+            db_name : db_name
+          })
         }
       );
       

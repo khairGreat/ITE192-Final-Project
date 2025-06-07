@@ -3,14 +3,14 @@ import { CheckCircle, Cancel } from "@mui/icons-material";
 import { useTables } from "../../hooks/context/useTables";
 import BackupBtn from "../buttons/BackupBtn";
 import { DropBtn } from "../buttons/DropBtn";
-import { useCreateBackupTable } from "../../hooks/useCreateBackup";
+import { useCreateBackup } from "../../hooks/useCreateBackup";
 import { useDropTable } from "../../hooks/useDrop";
 import { useGetBackup } from "../../hooks/context/useGetBackup";
 import { ConfirmDrop } from "../Modal/ConfirmDrop";
 
 export default function TablesTable() {
   const { tables } = useTables();
-  const { createBackupTable } = useCreateBackupTable();
+  const { createBackup } = useCreateBackup();
   const { droptable } = useDropTable();
   const { backups } = useGetBackup();
 
@@ -74,7 +74,7 @@ export default function TablesTable() {
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       <BackupBtn
                         backupFunc={() =>
-                          createBackupTable(
+                          createBackup(
                             table.database_name,
                             table.table_name
                           )

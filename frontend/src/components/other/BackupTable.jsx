@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
-import { useGetBackup } from '../../hooks/context/useGetBackup';
-import { useRestore } from '../../hooks/useRestore';
-import { FormatDateTime } from '../../utils/FormatDateTime';
-import RestoreBtn from '../buttons/RestoreBtn';
+import React, { useMemo } from "react";
+import { useGetBackup } from "../../hooks/context/useGetBackup";
+import { useRestore } from "../../hooks/useRestore";
+import { FormatDateTime } from "../../utils/FormatDateTime";
+import RestoreBtn from "../buttons/RestoreBtn";
 
 export default function BackupTable({ searchQuery }) {
   const { backups } = useGetBackup();
@@ -19,24 +19,40 @@ export default function BackupTable({ searchQuery }) {
       <table className="w-full border-collapse border border-gray-300 z-50">
         <thead className="bg-gray-100 sticky top-0 z-50">
           <tr>
-            <th className="border px-4 py-2">Backup File</th>
+            <th className="border px-4 py-2">Backup Name</th>
+            <th className="border px-4 py-2">Type</th>
             <th className="border px-4 py-2">Size (MB)</th>
             <th className="border px-4 py-2">Created Date</th>
-          
+
             <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredBackups.length > 0 ? (
             filteredBackups.map((sql_file) => (
-              <tr key={sql_file.id || sql_file.file} className="hover:bg-gray-50">
-                <td className="border px-4 py-6 text-center">{sql_file.file.split("\\").pop()}</td>
-                <td className="border px-4 py-6 text-center">{sql_file.size_mb}</td>
-                <td className="border px-4 py-6 text-center">{FormatDateTime(sql_file.created)}</td>
-               
+              <tr
+                key={sql_file.id || sql_file.file}
+                className="hover:bg-gray-50"
+              >
+                <td className="border px-4 py-6 text-center">
+                  {sql_file.file.split("\\").pop()}
+                </td>
+
+                <td className="border px-4 py-6 text-center">
+                  {sql_file.type}
+                </td>
+                <td className="border px-4 py-6 text-center">
+                  {sql_file.size_mb}
+                </td>
+                <td className="border px-4 py-6 text-center">
+                  {FormatDateTime(sql_file.created)}
+                </td>
+
                 <td className="border px-4 py-6 text-center">
                   <RestoreBtn
-                    restoreFunc={() => restore(sql_file.db_name, sql_file.file)}
+                    restoreFunc={() =>
+                      restore(sql_file.db_name, sql_file.file, sql_file.type)
+                    }
                   />
                 </td>
               </tr>

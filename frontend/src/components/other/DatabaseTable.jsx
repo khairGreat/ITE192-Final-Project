@@ -3,7 +3,7 @@ import { CheckCircle, Cancel } from "@mui/icons-material";
 import { useDatabase } from "../../hooks/context/useDatabase";
 import BackupBtn from "../buttons/BackupBtn";
 import { DropBtn } from "../buttons/DropBtn";
-import { useCreateBackupDb } from "../../hooks/useCreateBackup";
+import { useCreateBackup } from "../../hooks/useCreateBackup";
 import { useDropDb } from "../../hooks/useDrop";
 import { useGetBackup } from "../../hooks/context/useGetBackup";
 import { ConfirmDrop } from "../Modal/ConfirmDrop";
@@ -15,7 +15,7 @@ export default function DatabaseTable() {
     dbName: "",
   });
   const { databases } = useDatabase();
-  const { createBackupDb } = useCreateBackupDb();
+  const { createBackup } = useCreateBackup();
   const { dropDb } = useDropDb();
   const { backups } = useGetBackup();
 
@@ -64,7 +64,7 @@ export default function DatabaseTable() {
                   <td className="border px-4 py-2">
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       <BackupBtn
-                        backupFunc={() => createBackupDb(db.db_name)}
+                        backupFunc={() => createBackup(db.db_name)}
                       />
                       <DropBtn dropDbFunc={() => setOpenConfirmDrop({ open : true , dbName : db.db_name})} />
                     </div>

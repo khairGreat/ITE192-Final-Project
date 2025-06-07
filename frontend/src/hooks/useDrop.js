@@ -10,8 +10,11 @@ export const useDropDb = () => {
     const {  fetchTables } = useTables() ;
     
     const dropDb = async ( db_name ) => {
-        const response = await fetch( `http://127.0.0.1:8000/dropdb/${db_name}` ,{
-            method : "DELETE"
+        const response = await fetch( `http://127.0.0.1:8000/databases/deleteDb/` ,{
+            method : "DELETE" , 
+            body : JSON.stringify({
+                db_name : db_name
+            })
         })
 
         if ( response.ok) {
@@ -51,9 +54,13 @@ export const useDropTable = () => {
      const  { setNotifData } = useSuccess();
 
     const droptable = async (db_name,table_name) => {
-        const url = `http://127.0.0.1:8000/droptable/${db_name}/${table_name}`
+        const url = `http://127.0.0.1:8000/tables/deletetable`
         const response = await fetch( url  ,{
-            method : "DELETE"
+            method : "DELETE" ,
+            body : JSON.stringify({
+                db_name : db_name , 
+                table_name : table_name 
+            })
         })
 
         if (response.ok) {

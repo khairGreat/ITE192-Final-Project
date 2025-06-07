@@ -1,16 +1,16 @@
 // pages/BackupPage.jsx
-import React, { useState, useMemo } from 'react';
-import CustomHeaderPage from '../components/other/CustomHeaderPage';
-import BackupTable from '../components/other/BackupTable';
-import BackupSearchBar from '../components/buttons/BackupSearchBtn';
-import NoData from '../components/other/NoData';
-import { useHasData } from '../hooks/useHasData';
-import { useGetBackup } from '../hooks/context/useGetBackup';
+import React, { useState, useMemo } from "react";
+import CustomHeaderPage from "../components/other/CustomHeaderPage";
+import BackupTable from "../components/other/BackupTable";
+import BackupSearchBar from "../components/buttons/search/BackupSearchBtn";
+import NoData from "../components/other/NoData";
+import { useHasData } from "../hooks/useHasData";
+import { useGetBackup } from "../hooks/context/useGetBackup";
 
 export default function BackupPage() {
   const { backups } = useGetBackup();
   const { hasData } = useHasData();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBackups = useMemo(() => {
     return backups.filter((b) =>

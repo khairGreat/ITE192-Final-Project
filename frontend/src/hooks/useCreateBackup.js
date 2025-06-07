@@ -2,70 +2,61 @@ import {} from "react";
 import { useGetBackup } from "./context/useGetBackup";
 import { useSuccess } from "./context/useSuccess";
 
-export const useCreateBackupDb = () => {
+export const useCreateBackup = () => {
   const { fetchBackups } = useGetBackup();
 
   const { setNotifData } = useSuccess();
 
-  const createBackupDb = async (dbname) => {
-    const response = await fetch(`http://127.0.0.1:8000/dbackup/${dbname}`, {
+  const createBackup = async (dbName, tableName = "") => {
+    const response = await fetch(`http://127.0.0.1:8000/backups/createlogical`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        db_name: dbName,
+        table_name: tableName,
+      }),
     });
+
     if (response.ok) {
-      setNotifData({
-        success: true,
-        message: `Succesfully created a backup for ${dbname} table!`,
-        severity: "success",
-      });
-      fetchBackups();
-      console.log(`Database ${dbname} Backup created successfully`);
-    } else {
-      setNotifData({
-        success: true,
-        message: `Faled to create backup for ${dbname} database!`,
-        severity: "error",
-      });
-      console.error(`Database ${dbname} Failed to create backup`);
-    }
-  };
+      if (tableName.length != 0) {
+        setNotifData({
+          success: true,
+          message: `Succesfully created a backup for ${tableName} table!`,
+          severity: "success",
+        });
 
-  return { createBackupDb };
-};
-
-export const useCreateBackupTable = () => {
-  const { fetchBackups } = useGetBackup();
-  const { setNotifData } = useSuccess();
-
-  const createBackupTable = async (dbname, tablename) => {
-    const response = await fetch(
-      `http://127.0.0.1:8000/tablebackup/${dbname}/${tablename}`,
-      {
-        method: "POST",
+        console.log(`Succesfully created a backup for ${tableName} table!`);
       }
-    );
 
-    if (response.ok) {
       setNotifData({
         success: true,
-        message: `Succesfully created a backup for ${tablename} table!`,
+        message: `Succesfully created a backup for ${dbName} database!`,
         severity: "success",
       });
 
       fetchBackups();
-      console.info(
-        `Table ${tablename} at Datbase ${dbname} Backup created successfully`
-      );
+      console.log(`Succesfully created a backup for ${dbName} database!`);
     } else {
+      if (tableName.length != 0) {
+        setNotifData({
+          success: true,
+          message: `Failed to create a backup for ${tableName} table!`,
+          severity: "error",
+        });
+        console.error(`Failed to create a backup for ${tableName} table!`);
+      }
+
       setNotifData({
         success: true,
-        message: `Faled to create backup for ${tablename} table!`,
+        message: `Faled to create backup for ${dbName} database!`,
         severity: "error",
       });
-      console.error(
-        `Table ${tablename} at Datbase ${dbname} Failed to create backup`
-      );
+
+      console.error(`Database ${dbName} Failed to create backup`);
     }
   };
 
-  return { createBackupTable };
+  return { createBackup };
 };
