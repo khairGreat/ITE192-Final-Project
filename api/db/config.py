@@ -11,5 +11,9 @@ config = {
     "mysql" : {
         "mysql_path" : r"C:\New folder\mysql\bin\mysql.exe" , 
         "mysql_dump_path" : r"C:\New folder\mysql\bin\mysqldump.exe"
-    }  
+    }  , 
+    "admin_cred" : {
+        "admin_username" : getenv("ADMIN_USERNAME") ,
+        "admin_password" : getenv("ADMIN_PASSWORD")  
+    } 
 }

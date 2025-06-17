@@ -7,12 +7,12 @@ from db.db_operations.database import database_operations
 from db.db_operations.table import table_operation
 from db.db_operations.logger import log_operations
 from db.db_operations.restore import restore_operations 
-
+from db.config import config 
 class Admin:
     
-    def __init__(self, username: str = "root", password: str = "admin123") -> None:
-        self.username = username
-        self.password = password
+    def __init__(self ) -> None:
+        self.username = config["admin_cred"]["admin_username"]
+        self.password = config["admin_cred"]["admin_password"]
     
     def list_databases(self):
         return database_operations["list_databases"]()
