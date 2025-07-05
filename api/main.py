@@ -1,10 +1,11 @@
 
-from os import path
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from db.admin import Admin
-from db.connection import is_connected
+from db.connection import is_connected, ModelBase, base_engine
 
 #  ? ROUTERS
 from router.adminRouter import admin_router
@@ -39,12 +40,21 @@ app.include_router(restore_router, prefix='/restore')
 
 @app.get('/')
 async def root():
-    if is_connected():
-        
-        return JSONResponse(content={"is_connected":is_connected()},status_code=200)
+    connected = is_connected()
+    if connected:
+        try:
+            with base_engine.connect() as connection:
+                connection.execute(text("USE log;"))
+                ModelBase.metadata.create_all(bind=connection)
+                print("✅ Successfully established a connection")
+        except Exception as e:
+            print(f"❌ Failed to initialize DB: {e}")
+
+        return JSONResponse(content={"is_connected": True}, status_code=200)
     else:
-        print('Failed to established a connection')
-        return  JSONResponse(content={"is_connected":is_connected()},status_code=404)
+        print('❌ Failed to connect to the database.')
+        return JSONResponse(content={"is_connected": False}, status_code=500)
+
 
 
 

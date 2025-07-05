@@ -146,7 +146,7 @@ export const LogTableModal = ({ open, onClose, logs }) => {
                     <TableCell>
                       <Typography variant="body2">
                         <div className="text-center font-primary">
-                          {FormatDateTime(log.log_time)}
+                          {FormatDateTime(log.timestamp)}
                         </div>
                       </Typography>
                     </TableCell>
