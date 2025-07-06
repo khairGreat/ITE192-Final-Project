@@ -3,6 +3,7 @@ from db.adminQuery import admin_query
 from sqlalchemy import text
 from db.config import config
 import platform , shutil , socket
+from utility.rowSerialize import row_serialize
 
 
 #  ? LIST OF DATABASES
@@ -20,23 +21,8 @@ def list_databases():
                 
             rows = result.fetchall()
 
-        databases_info = []
-        for row in rows:
-            creation_date = row.creation_date
-            if creation_date is not None:
-                creation_date = creation_date.strftime("%Y-%m-%d %H:%M:%S")
-            else:
-                creation_date = "No tables (unknown creation date)"
-
-            databases_info.append({
-                "db_name": row.db_name,
-                "table_count": row.table_count,
-                "size_mb": round(float(row.size_mb), 2),
-                "creation_date": creation_date,
-            })
-
-        return { "success": True , "data": databases_info}
-
+        databases = row_serialize(type='databases' , rows= rows)
+        return { "success": True, "count" : len(databases) ,  "data": databases}
 
 
 # ? CREATE DATABASE
@@ -51,15 +37,16 @@ def create_database( db_name: str):
             }
         
         query = admin_query(db_name)["create"][0]
+        
         with base_engine.connect() as con:
             result = con.execute(text(query))
             con.commit()
             
             if result:
+                
                 return {
                     "success" : True ,
                     "message": f"Database` created successfully `{db_name}`." ,
-                    
                 }
                 
         return {

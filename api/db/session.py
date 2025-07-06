@@ -15,3 +15,8 @@ def get_session() -> Generator[Session, Any, None]:
         raise
     finally:
         session.close()
+<<<<<<< HEAD
+=======
+
+    
+>>>>>>> log-table
