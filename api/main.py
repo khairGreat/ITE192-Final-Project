@@ -1,5 +1,3 @@
-
-
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,19 +24,20 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,      # or ["*"] to allow all origins (not recommended for production)
+    allow_origins=origins,  # or ["*"] to allow all origins (not recommended for production)
     allow_credentials=True,
-    allow_methods=["*"],        # allow all HTTP methods (GET, POST, etc)
-    allow_headers=["*"],        # allow all headers
+    allow_methods=["*"],  # allow all HTTP methods (GET, POST, etc)
+    allow_headers=["*"],  # allow all headers
 )
 
-app.include_router(db_router, prefix='/databases')
-app.include_router(table_router, prefix='/tables')
-app.include_router(admin_router, prefix='/admin')
-app.include_router(backup_router, prefix='/backups')
-app.include_router(restore_router, prefix='/restore')
+app.include_router(db_router, prefix="/databases")
+app.include_router(table_router, prefix="/tables")
+app.include_router(admin_router, prefix="/admin")
+app.include_router(backup_router, prefix="/backups")
+app.include_router(restore_router, prefix="/restore")
 
-@app.get('/')
+
+@app.get("/")
 async def root():
     connected = is_connected()
     if connected:
@@ -52,13 +51,5 @@ async def root():
 
         return JSONResponse(content={"is_connected": True}, status_code=200)
     else:
-        print('❌ Failed to connect to the database.')
+        print("❌ Failed to connect to the database.")
         return JSONResponse(content={"is_connected": False}, status_code=500)
-
-
-
-
-
-
-
-

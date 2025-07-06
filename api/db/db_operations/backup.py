@@ -1,14 +1,18 @@
 import os, subprocess, shutil, random
 from datetime import datetime
-from uuid import uuid4
 from db.config import config
 from typing import Optional
+from utility.backupDir import backup_dir 
+from utility.folderSize import get_folder_size
+from utility.backupFileName import file_name
 
 
 # ? LIST OF BACKUPS
 def list_backups():
     try:
-        export_dir = os.path.join(os.getcwd(), "backups")
+       
+        export_dir = os.path.join(os.getcwd(), backup_dir())
+      
         if not os.path.exists(export_dir):
             return {"success": False, "message": "Backup directory does not exist"}
 
@@ -57,31 +61,18 @@ def list_backups():
 
                 continue
 
-        return {"success": True, "count" : len(backups), "data": backups}
+        return {"success": True, "count": len(backups), "data": backups}
 
     except Exception as e:
         return {"success": False, "message": str(e)}
 
 
 # ? LOGICAL BACKUP
-def logical_backup(
-    db_name: str,
-    table_name: Optional[str] = None,
-):
-
-    # export_dir = r"C:\Users\msu-wone\Downloads\ITE192-Final Project\backups"
-    export_dir = os.path.join(os.getcwd(), "backups")
+def logical_backup( db_name: str, table_name: Optional[str] = "" ):
+    
+    export_dir = os.path.join(os.getcwd(), backup_dir())
     os.makedirs(export_dir, exist_ok=True)
-
-    yearnow = datetime.now().strftime("%Y")
-    unique_number = uuid4().hex[:6]
-
-    # Build file_tag (db or db_table)
-    file_tag = f"{db_name}_({table_name})" if table_name else db_name
-    file_name = f"{file_tag}__backup__{yearnow}-{unique_number}.sql"
-
-    # Construct backup filename with the new format
-    backup_file = os.path.join(export_dir, file_name)
+    backup_file = os.path.join(export_dir, file_name(db_name,table_name))
 
     cmd = [
         config["mysql"]["mysql_dump_path"],
@@ -109,7 +100,7 @@ def logical_backup(
 
             return {
                 "success": True,
-                "file_name": file_name,
+                "file_name": file_name(db_name,table_name),
                 "path": backup_file,
                 "size_mb": size_mb,
                 "created_at": created_at,
@@ -122,15 +113,6 @@ def logical_backup(
         return {"success": False, "error": str(e)}
 
 
-def get_folder_size(folder_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(folder_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            # skip if it's a symlink
-            if not os.path.islink(fp):
-                total_size += os.path.getsize(fp)
-    return total_size
 
 
 def raw_backup(db_name, xampp_path=r"C:\New Folder", backup_dir="backups"):
@@ -145,6 +127,7 @@ def raw_backup(db_name, xampp_path=r"C:\New Folder", backup_dir="backups"):
         }
 
     try:
+        
         os.makedirs(backup_dir, exist_ok=True)
 
         now = datetime.now().strftime("%Y%m%d_%H%M%S")

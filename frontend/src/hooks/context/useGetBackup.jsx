@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-
+import request  from "../request";
 const BackupContext = createContext();
 
 export const BackupProvider = ({ children }) => {
@@ -7,12 +7,9 @@ export const BackupProvider = ({ children }) => {
 
   const fetchBackups = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/backups/list", {
-        method: "GET",
-      });
-      const { success, data, message } = await response.json();
-
-      if (response.ok) {
+      const response = await request.get("/backups/list");
+      const { success, data, message } = response.data;
+      if (response.status) {
         if (success) {
           setBackups(data);
           console.log("Backup data:", data);

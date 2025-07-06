@@ -1,5 +1,6 @@
 // src/hooks/TablesContext.js
 import { createContext, useContext, useState, useEffect } from "react";
+import request  from "../request";
 
 // 1. Create the context
 const TablesContext = createContext();
@@ -10,10 +11,10 @@ export const TablesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchTables = async () => {
-    const response = await fetch("http://127.0.0.1:8000/tables/list", { method: "GET" });
+    const response = await request.get("/tables/list");
 
-    if (response.ok) {
-      const { data , success , message } = await response.json();
+    if (response.status) {
+      const { data , success , message } = response.data ;
       if (success) {
         setTables(data)
         setLoading(false);
