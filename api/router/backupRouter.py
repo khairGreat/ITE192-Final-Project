@@ -38,8 +38,9 @@ async def create_logical_db_backup(request: Request):
     table_name = data.get("table_name")
 
     try:
-        result = admin.logical_backup(db_name=db_name, table_name=table_name or None)
+        result = admin.logical_backup(db_name=db_name, table_name=table_name )
         target = db_name if not table_name else table_name
+     
 
         if result.get("success"):
             

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import request from "../request";
 
 const DatabaseContext = createContext();
 
@@ -7,11 +8,13 @@ export const DatabaseProvider = ({ children }) => {
 
   const fetchDatabases = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/databases/list");
+      ;
+      const response = await request.get("/databases/list")
 
-      if (res.ok) {
-        const json = await res.json();
-        const { success, data, message } = json;
+      if (response.status) {
+        
+        const { success, data, message } = response.data;
+
         if (success) {
           setDatabases(data);
           console.log("databases: ", data);

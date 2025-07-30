@@ -9,8 +9,8 @@ config = {
     "password" : f"{getenv("DB_PASSWORD")}" ,
     "port" : getenv("DB_PORT")    , 
     "mysql" : {
-        "mysql_path" : r"C:\New folder\mysql\bin\mysql.exe" , 
-        "mysql_dump_path" : r"C:\New folder\mysql\bin\mysqldump.exe"
+        "mysql_path" : r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" , 
+        "mysql_dump_path" : r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe"
     }  , 
     "admin_cred" : {
         "admin_username" : getenv("ADMIN_USERNAME") ,

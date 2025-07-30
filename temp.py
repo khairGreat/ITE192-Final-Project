@@ -1,15 +1,7 @@
-from pydantic import BaseModel 
-from fastapi import FastAPI
-import passlib 
+import os
 
 
-class UserLogin(BaseModel):
-    username : str 
-    password : str
-    
+cur_dir: str = os.getcwd()
 
-class TokenResponse(BaseModel):
-    access_token : str
-    token_type : str 
-    
-
+print(f"current directory: {cur_dir}")
+print(cur_dir.endswith("Project"))

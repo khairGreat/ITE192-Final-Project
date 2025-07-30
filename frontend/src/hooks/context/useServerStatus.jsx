@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import request  from "../request";
 
 const ServerStatusContext = createContext();
 
@@ -7,9 +8,11 @@ export const ServerStatusProvider = ({ children }) => {
 
   const fetchServerStatus = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/admin/status"); // customize URL
-      const { success, data } = await res.json();
-      if (success) {
+      const res = await request.get("/admin/status"); 
+
+      if (res.status) {
+        const { data  } = res.data ;
+        
         setServerStatus(data);  
         console.log("server status:", data);
       }

@@ -3,15 +3,15 @@ import { useSuccess } from "./context/useSuccess";
 import { useDatabase } from "./context/useDatabase";
 import { useTables } from "./context/useTables";
 import { useGetBackup } from "./context/useGetBackup"
+import request from "./request";
 
 export const useCreateDb = () => {
   const { setNotifData } = useSuccess();
   const { fetchDatabases } = useDatabase();
   const { fetchTables } = useTables();
   const { fetchBackups } = useGetBackup()
-
   const addDb = async (db_name, saveBackup) => {
-    const url = `http://127.0.0.1:8000/databases/createDb`;
+    const url = `http://127.0.0.1:8000/databases/create`;
     const response = await fetch(url, {
       method: "POST",
       body : JSON.stringify({db_name : db_name})
